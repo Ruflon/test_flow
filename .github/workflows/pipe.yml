@@ -44,7 +44,7 @@ jobs:
           chmod 600 private_key
           echo "ls -la"
           ls -la
-          sudo rsync -rlvz --delete --exclude=no-copy.txt -e "ssh -i private_key -o StrictHostKeyChecking=no" deploy/* ${SERVER_USER}@${SERVER_HOST}:${SERVER_PATH}
+          sudo rsync -rlvz --delete --exclude=no-copy.txt -e "ssh -i private_key -o StrictHostKeyChecking=no" deploy/ ${SERVER_USER}@${SERVER_HOST}:${SERVER_PATH}
      
       - name: Set file permissions on the server
         run: |
