@@ -1,0 +1,60 @@
+name: Build and Deploy Test Environment
+
+on:
+  workflow_dispatch:
+ # push:
+ #   branches:
+  #    - testing
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SERVER_USER: ${{ secrets.SERVER_USER }} 
+      SERVER_HOST: ${{ secrets.SERVER_HOST }}
+      SERVER_PATH: ${{ secrets.SERVER_PATH }} #/tmp/usun/
+      
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          path: app
+
+      - name: Build front-end
+        run: |
+          echo "ala ma psa" > o_psie.txt
+          mkdir mleko
+        working-directory: ./app
+        
+      - name: Prepare deployment package
+        run: |
+          mkdir deploy
+          rsync -av ./app/* deploy/
+
+      - name: Deploy to server
+        run: |
+          pwd
+          echo "ls -la"
+          ls -la
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
+          chmod 600 private_key
+          echo "ls -la"
+          ls -la
+          rsync -avz --delete -e "ssh -i private_key -o StrictHostKeyChecking=no" deploy/* ${SERVER_USER}@${SERVER_HOST}:${SERVER_PATH}
+     
+      - name: Set file permissions on the server
+        run: |
+          ssh -i private_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} << EOF
+            cd ${SERVER_PATH}
+            sudo chown -R omnifleet:www-data .
+            sudo find . -type d -exec chmod 755 {} \;
+            sudo find . -type f -exec chmod 644 {} \;
+          EOF
+
+      # - name: Reload Apache on Server
+      #   run: |
+      #     ssh -i private_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} \
+      #       "sudo apachectl configtest && sudo systemctl reload apache2"
+      #     rm -f private_key
