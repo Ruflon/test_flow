@@ -61,4 +61,6 @@ jobs:
           ssh -i private_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} \
             "sudo apachectl configtest && sudo systemctl reload apache2"
           ls -la
+          rm -f private_key
+          ls -la
           
