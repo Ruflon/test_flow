@@ -2,9 +2,11 @@ name: Build and Deploy Test Environment
 
 on:
   workflow_dispatch:
- # push:
- #   branches:
-  #    - testing
+    inputs:
+      branch:
+        description: "Wybierz gałąź"
+        required: true
+        default: "test"
 
 jobs:
   build-and-deploy:
