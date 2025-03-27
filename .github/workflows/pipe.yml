@@ -52,7 +52,7 @@ jobs:
             cd ${SERVER_PATH}
             sudo chown -R omnifleet:www-data .
             sudo find . -mindepth 1 -type d -exec chmod 755 {} \;
-            sudo find . -type f -exec chmod 646 {} \;
+            sudo find . -type f -exec chmod 644 {} \;
           EOF
 
           
