@@ -51,15 +51,8 @@ jobs:
           ssh -t -i private_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} << EOF
             cd ${SERVER_PATH}
             sudo chown -R omnifleet:www-data .
-            sudo find . -type d -exec chmod 755 {} \;
+            sudo find . -mindepth 1 -type d -exec chmod 755 {} \;
             sudo find . -type f -exec chmod 646 {} \;
           EOF
 
-      - name: Reload Apache on Server
-        run: |
-          ssh -i private_key -o StrictHostKeyChecking=no ${SERVER_USER}@${SERVER_HOST} \
-            "sudo apachectl configtest && sudo systemctl reload apache2"
-          ls -la
-          rm -f private_key
-          ls -la
           
